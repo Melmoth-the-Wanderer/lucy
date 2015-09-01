@@ -1,0 +1,9 @@
+https://docs.angularjs.org/api/ng/input/input%5Bnumber%5D
+DATPICKER https://github.com/720kb/angular-datepicker ( ALBO NIE, NATYWNE FUNKCJE WIĘKSZOŚCI PRZEGLĄDAREK RADZĄ SOBIE OK )
+http://php.net/manual/en/function.get-browser.php do sesji zamiast pełnego stingu z wersją
+Walidacja nazwy budżetu
+
+WERSJONOWANIE cookie + wypluta wersja w paramertach http (pliki js, css, pliki templatek w jsie ) - window.location.reload( true );
+JS: if( !cookie ) setCookie;
+JS: if( cookie && var !== system.ver ) window.location.reload( true );
+PHP: add dummy paramater with system.ver to all kind of remote sources ( including template files! <-- mix it with JS veriable );

@@ -1,0 +1,1 @@
+<div ng-include src="'/tpl/parts/message.tpl'"></div>
