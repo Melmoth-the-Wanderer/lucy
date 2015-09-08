@@ -1,7 +1,3 @@
-<div ng-class="{ 'active': loading }" class="ui inverted dimmer">
-  <div class="ui large text loader">Zapisuję...</div>
-</div>
-
 <a ng-href="#budzet/{{ budzet.ID }}" class="ui small basic grey button"><i class="step backward icon"></i>Budżet</a>
 <a href="#budzet" class="ui small basic grey button"><i class="backward icon"></i>Lista budżetów</a>
 

@@ -1,6 +1,6 @@
 'use strict';
 
-Lucy.controller( 'loginCtrl', function( $scope, $rootScope, $location, kontoService, sessionService, infoService ) {
+Lucy.controller( 'loginCtrl', function( $scope, $rootScope, $location, kontoService, sessionService, infoService, spinService ) {
   
   $rootScope.title = "Logowanie";
   $rootScope.subtitle = false;
@@ -27,17 +27,17 @@ Lucy.controller( 'loginCtrl', function( $scope, $rootScope, $location, kontoServ
       danger: false
     });
     $location.path( '/home' );
-    $scope.loading = false;
+    spinService.stop();
     $rootScope.zalogowany = true;
   };
   var zalogujFailureCallback = function( response ) {
     console.log( response );
-    kontoService.wyloguj( $scope, function() {}, function() {} ); 
-    $scope.loading = false;
+    kontoService.wyloguj( $scope, function() {}, function() {} );
+    spinService.stop();
   }
   $scope.zaloguj = function( e, konto ) {
     e.preventDefault();
-    $scope.loading = true;
+    spinService.start( 'Loguję...' );
     kontoService.zaloguj( konto, $scope, zalogujSuccessCallback, zalogujFailureCallback );
   };
 });

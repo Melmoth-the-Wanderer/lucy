@@ -1,13 +1,12 @@
 'use strict';
 
-Lucy.controller( 'budzetCtrl', function( $scope, $rootScope, $location, kontoService, sessionService, budzetService, infoService, updateService ) {
-  $rootScope.title = "Twoje aktywne budżety";
+Lucy.controller( 'budzetCtrl', function( $scope, $rootScope, $location, kontoService, sessionService, budzetService, infoService, updateService, spinService ) {
+  $rootScope.title = "Budżet - lista";
   $rootScope.subtitle = "Znajdują się tu wszystkie budżety, niezależnie od posiadanej kwoty czy terminów wykorzystania.";
   $scope.message = {};
   $scope.budzetLista = {};
   $scope.budzet = {};
   $scope.opcjaDodajBudzet = false;
-  $scope.loadingBudzetDodaj = false;
   $scope.dodajBudzetToggle = function() {
     $scope.opcjaDodajBudzet = ( $scope.opcjaDodajBudzet ? false : true );
     $scope.message = {};
@@ -24,30 +23,27 @@ Lucy.controller( 'budzetCtrl', function( $scope, $rootScope, $location, kontoSer
     $scope.budzet = {};
     $scope.budzet.ID = response.data;
     $location.path( '/budzet/'+response.data+'/edytuj' );
-    $scope.loadingBudzetDodaj = false;
+    spinService.stop();
   };
   var budzetDodajFailureCallback = function( response ) {
     $scope.message = {};
     $scope.message.error = response.statusText;
-    $scope.loadingBudzetDodaj = false;  
+    spinService.stop();
   };
   $scope.budzetDodaj= function( e, budzet ) {
     e.preventDefault;
-    $scope.loadingBudzetDodaj = true;
+    spinService.start( 'Lokuję fundusze' );
     updateService.sprawdzAktualizacje();
     budzetService.budzetDodaj( budzet, sessionService.getSecret(), $scope, budzetDodajSuccessCallback, budzetDodajFailureCallback );
   };
 
-  $scope.loading = true;
+  spinService.start( 'Przeliczam oszczędności' );
   var budzetWyplujWszystkieSuccessCallback = function( response ) {
-    if( response.data === 'null' ) {
+    if( response.data === 'null' || response.data === null ) {
       var budzetLista = [];
       infoService.setInfo( {
-        success: null,
-        error: null,
-        danger: null,
         info: "Człowiek bez budżetu, a żyje... :)"
-      }, 0 );        
+      }, 0 );
     }
     else {
       var budzetLista = response.data;
@@ -67,10 +63,11 @@ Lucy.controller( 'budzetCtrl', function( $scope, $rootScope, $location, kontoSer
       });
     }
     $scope.budzetLista = budzetLista;
-    $scope.loading = false; 
+    spinService.stop(); 
   };
   var budzetWyplujWszystkieFailureCallback = function( response ) {
     console.log( response ); 
+    spinService.stop();
   };
   budzetService.budzetWyplujWszystkie( $scope, sessionService.getSecret(), budzetWyplujWszystkieSuccessCallback, budzetWyplujWszystkieFailureCallback );
 });

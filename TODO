@@ -3,7 +3,38 @@ DATPICKER https://github.com/720kb/angular-datepicker ( ALBO NIE, NATYWNE FUNKCJ
 http://php.net/manual/en/function.get-browser.php do sesji zamiast pełnego stingu z wersją
 Walidacja nazwy budżetu
 
-WERSJONOWANIE cookie + wypluta wersja w paramertach http (pliki js, css, pliki templatek w jsie ) - window.location.reload( true );
-JS: if( !cookie ) setCookie;
-JS: if( cookie && var !== system.ver ) window.location.reload( true );
-PHP: add dummy paramater with system.ver to all kind of remote sources ( including template files! <-- mix it with JS veriable );
+Podmień 401 na 403 w zwracanych błędach
+
+<div class="item">
+  <div>Skróty:</div>
+  <div class="list">
+    <div class="item">
+      Predefiniowanie akcji, np. 'opłać telefon' zdefiniowane jako "wydatek xx z budzetu o id y"
+    </div>
+  </div>
+</div>
+<div class="item">zmiana nazwy budzetu</div>
+<div class="item">Popup z potwierdzeniem (np usuwanie budzetu) zamiast podmiany divów</div>
+<div class="item">Transfer środków z/do budżetu</div>
+<div class="item">Transfer środow na inny budżet podczas rozwiązywania budżetu</div>
+<div class="item">
+  <div>Ładna / poprawiona edycja budzetu</div>
+  <div class="list">
+    <div class="item">pole max/min puste, jeśli wartość = null</div>
+  </div>
+</div>
+<div class="item">Budżet tymczasowy - autmatyczne rozwiązanie, gdy kwota spadnie do 0</div>
+<div class="item">
+  <div>Prawa dostępów + zmienne konfiguracyjne użytkowników</div>
+  <div class="list">
+    <div class="item">Timezone</div>
+    <div class="item">Nazwa waluty?</div>
+  </div>
+</div>
+<div class="item">Budżety w innej walucie</div>
+<div class="item">Pulpit - statystyki i notatki usera</div>
+<div class="item">Praca offline - synchronizacja, gdy dostępny net</div>
+<div class="item">"PLN" -> "j." lub "fundusz"</div>
+<div class="item"><strike>Info o braku połączenia z netem</strike></div>
+<div class="item"><strike>Pole "start" jako nieobowiązkowe, tak samo jak stop</strike></div>
+<div class="item"><strike>Logowanie z możliwością zapamiętani sesji na dłużej</strike></div>

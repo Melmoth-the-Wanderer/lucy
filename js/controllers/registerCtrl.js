@@ -1,6 +1,6 @@
 'use strict'
 
-Lucy.controller( 'registerCtrl', function( $scope, $rootScope, $location, kontoService, infoService ) {
+Lucy.controller( 'registerCtrl', function( $scope, $rootScope, $location, kontoService, infoService, spinService ) {
   
   $rootScope.title = 'Rejestracja nowego konta';
   $rootScope.subtitle = false;
@@ -17,17 +17,17 @@ Lucy.controller( 'registerCtrl', function( $scope, $rootScope, $location, kontoS
       danger: false
     });
     $location.path( '/login' );
-    $scope.loading = false;
+    spinService.stop();
   };
   var zarejestrujFailureCallback = function( response ) {
     console.log( response );
     $scope.message = {};
     $scope.message.error = response.statusText;
-    $scope.loading = false;
+    spinService.stop();
   };
   $scope.kontoZarejestruj = function( e, konto ) {
     e.preventDefault();
-    $scope.loading = true;
+    spinService.start( 'Tworzę...' );
     kontoService.zarejestruj( konto, zarejestrujSuccessCallback, zarejestrujFailureCallback );
   }
 });

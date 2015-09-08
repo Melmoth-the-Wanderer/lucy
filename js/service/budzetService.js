@@ -7,7 +7,7 @@ Lucy.factory( 'budzetService', function( $http, $location, infoService, sessionS
       var data = {
         secret: secret
       }
-      var $promise = $http.post( '/ajax/get/budzetWyplujWszystkie/', data );
+      var $promise = $http.post( '/ajax/get/budzetWyplujWszystkie/?'+lucy_v, data );
       $promise.then( function( response ) {
         successCallback( response );
       }, function( response ) {
@@ -26,7 +26,7 @@ Lucy.factory( 'budzetService', function( $http, $location, infoService, sessionS
         id: budzetId,
         secret: secret
       };
-      var $promise = $http.post( '/ajax/get/budzetWyplujPoId/', data );
+      var $promise = $http.post( '/ajax/get/budzetWyplujPoId/?'+lucy_v, data );
       $promise.then( function( response ) {
         successCallback( response )
       }, function( response ) {
@@ -46,7 +46,7 @@ Lucy.factory( 'budzetService', function( $http, $location, infoService, sessionS
         secret: secret
       };
       sessionService.check( function() {}, function() {} );
-      var $promise = $http.post( '/ajax/post/budzetDodaj/', data );
+      var $promise = $http.post( '/ajax/post/budzetDodaj/?'+lucy_v, data );
       $promise.then( function( response ) {
         successCallback( response );
       }, function( response ) {
@@ -66,7 +66,7 @@ Lucy.factory( 'budzetService', function( $http, $location, infoService, sessionS
         secret: secret
       };
       sessionService.check( function() {}, function() {} );
-      var $promise = $http.post( '/ajax/post/budzetUsun/', data );
+      var $promise = $http.post( '/ajax/post/budzetUsun/?'+lucy_v, data );
       $promise.then( function( response ) {
         successCallback( response );
       }, function( response ) {
@@ -86,7 +86,7 @@ Lucy.factory( 'budzetService', function( $http, $location, infoService, sessionS
         budzet: budzet
       };
       sessionService.check( function() {}, function() {} );
-      var $promise = $http.post( '/ajax/post/budzetEdytuj/', data );
+      var $promise = $http.post( '/ajax/post/budzetEdytuj/?'+lucy_v, data );
       $promise.then( function( response ) {
         successCallback( response );
       }, function( response ) {

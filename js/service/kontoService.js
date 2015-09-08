@@ -1,6 +1,6 @@
 'use strict';
 
-Lucy.factory( 'kontoService', function( $rootScope, $http, $location, sessionService, infoService ) {
+Lucy.factory( 'kontoService', function( $rootScope, $http, $location, sessionService, infoService, spinService ) {
   
   function czyZalogowany( successCallback, failureCallback, updateSystem ) { 
     if( updateSystem === undefined )
@@ -10,13 +10,13 @@ Lucy.factory( 'kontoService', function( $rootScope, $http, $location, sessionSer
   
   function zaloguj( konto, scope, successCallback, failureCallback ) {
     wyloguj( scope, function(){}, function(){} );
-    var $promise = $http.post( '/ajax/get/kontoSprawdzLogin/', konto );
+    var $promise = $http.post( '/ajax/get/kontoSprawdzLogin/?'+lucy_v, konto );
     $promise.then( function( response ) {
       sessionService.set( konto, scope, successCallback, failureCallback );
     }, function( response ) {
       scope.message = {};
       scope.message.error = response.statusText;
-      scope.loading = false;
+      spinService.stop();
     });
   };
   
@@ -25,7 +25,7 @@ Lucy.factory( 'kontoService', function( $rootScope, $http, $location, sessionSer
   };
   
   function zarejestruj( konto, successCallback, failureCallback ) {
-    var $promise = $http.post( '/ajax/post/kontoToCreate/', konto );
+    var $promise = $http.post( '/ajax/post/kontoToCreate/?'+lucy_v, konto );
     $promise.then( function( response ) {  
       successCallback( response );
     }, function( response ) {

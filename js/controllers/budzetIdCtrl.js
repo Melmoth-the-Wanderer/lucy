@@ -1,11 +1,11 @@
 'use strict';
-Lucy.controller( 'budzetIdCtrl', function( $scope, $rootScope, $routeParams, $location, budzetService, operacjaService, sessionService, infoService, updateService ) {
+Lucy.controller( 'budzetIdCtrl', function( $scope, $rootScope, $routeParams, $location, budzetService, operacjaService, sessionService, infoService, updateService, spinService ) {
   
   /*
    *  Wypluwanie danych budżetu po ID budzetu
    */
   
-  $scope.loading = true;
+  spinService.start( 'Przeliczam drobniaki' );
   var budzetWyplujPoIdSuccessCallback = function( response ) {
     var info = {};
     if( response.data === 'null' ) {
@@ -13,10 +13,10 @@ Lucy.controller( 'budzetIdCtrl', function( $scope, $rootScope, $routeParams, $lo
       info.info = "Jesteś pewien, że nie usunąłeś tego budżetu wcześniej?";
       infoService.setInfo( info );
       $location.path( '/budzet' );
-      $scope.loading = false;
+      spinService.stop();
       return false;
     }
-    $rootScope.title = response.data === 'null' ? '???' : response.data[0].nazwa + ' (1999-12-31)';
+    $rootScope.title = response.data === 'null' ? '???' : response.data[0].nazwa;
     var budzet = response.data === 'null' ? {} : response.data[0];
     budzet = {
       kwota: budzet.kwota,
@@ -34,13 +34,13 @@ Lucy.controller( 'budzetIdCtrl', function( $scope, $rootScope, $routeParams, $lo
     };
     budzet.meta.isEmpty = ( !budzet.meta.fromStart && !budzet.meta.tillStop && !budzet.meta.toMin && !budzet.meta.toMax ) ? true : false;
     $scope.budzet = budzet;
-    $scope.loading = false;
+    spinService.stop();
   };
   var budzetWyplujPoIdFailureCallback = function( response ) {
     var info = {};
     info.error = "Błąd: " + response.statusText; 
     infoService.setInfo( info, 0 );
-    $scope.loading = false;
+    spinService.stop();
   };
   budzetService.budzetWyplujPoId( $routeParams.id, sessionService.getSecret(), $scope, budzetWyplujPoIdSuccessCallback, budzetWyplujPoIdFailureCallback );
     
@@ -51,14 +51,40 @@ Lucy.controller( 'budzetIdCtrl', function( $scope, $rootScope, $routeParams, $lo
     if( response.data !== 'null' ) {
       $scope.operacjeLista = response.data;
     }
-    $scope.loading = false;
+    spinService.stop();
   };
   var operacjeWyplujPoBudzetIdFailure = function( response ) {
     console.log( response.data );
-    $scope.loading = false;
+    spinService.stop();
   };
-  $scope.loading = true;
+  spinService.start( 'Czytam historię...' );
   operacjaService.operacjeWyplujPoBudzetId( $routeParams.id, sessionService.getSecret(), $scope, operacjeWyplujPoBudzetIdSuccess, operacjeWyplujPoBudzetIdFailure );
+  
+  /*
+   *  Uzupełnienie listy budżetów do transferu
+   */
+  var budzetWyplujWszystkieSuccessCallback = function( response ) {
+    if( response.data === 'null' ) {
+      var budzetLista = [];
+    } else {
+      var budzetLista = response.data;
+      for( var key in budzetLista ) {
+        if( budzetLista[key].ID === $routeParams.id ) {
+          budzetLista.splice( key, 1 );
+        }
+      }
+    }
+    console.log( budzetLista );
+    //alert( 'nie działa: budzetIdCtrl:79 -> wypluwa złą listę budżetów' );
+    $scope.budzetLista = budzetLista;
+    spinService.stop();
+  };
+  var budzetWyplujWszystkieFailureCallback = function( response ) {
+    console.log( response );
+    spinService.stop(); 
+  };
+  spinService.start( 'Wypełniam listę budżetów...' );
+  budzetService.budzetWyplujWszystkie( $scope, sessionService.getSecret(), budzetWyplujWszystkieSuccessCallback, budzetWyplujWszystkieFailureCallback );
   
   /*
    *  ZMIENNE SCOPE'a
@@ -66,14 +92,16 @@ Lucy.controller( 'budzetIdCtrl', function( $scope, $rootScope, $routeParams, $lo
   $rootScope.subtitle = "Szczegóły budżetu";
   $scope.message = {};
   $scope.budzet = {};
-  $scope.przychod = {};
-  $scope.operacjeLista = {};
   $scope.wydatek = {};
+  $scope.przychod = {};
+  $scope.transfer = {};
+  $scope.operacjeLista = {};
+  $scope.budzetLista = {};
   $scope.opcjaUsunBudzet = false;
   $scope.opcjaDodajWydatek = false;
   $scope.opcjaDodajPrzyplyw = false;
+  $scope.opcjaWykonajTransfer = false;
   $scope.hideMainActions = false;
-  $scope.loadingBudzetUsun = false;
   
   $scope.usunBudzetToggle = function() {
     updateService.sprawdzAktualizacje();
@@ -86,52 +114,82 @@ Lucy.controller( 'budzetIdCtrl', function( $scope, $rootScope, $routeParams, $lo
     updateService.sprawdzAktualizacje();
     $scope.opcjaDodajWydatek = ( $scope.opcjaDodajWydatek ? false : true );
     $scope.opcjaDodajPrzyplyw = false;
+  $scope.opcjaWykonajTransfer = false;
     $scope.message = {};
   };
   $scope.przyplywDodajToggle = function() {
     updateService.sprawdzAktualizacje();
     $scope.opcjaDodajPrzyplyw = ( $scope.opcjaDodajPrzyplyw ? false : true );
     $scope.opcjaDodajWydatek = false;
+    $scope.opcjaWykonajTransfer = false;
     $scope.message = {};
   };
+  $scope.transferWykonajToggle = function() {
+    updateService.sprawdzAktualizacje();
+    $scope.opcjaWykonajTransfer = ( $scope.opcjaWykonajTransfer ? false : true );
+    $scope.opcjaDodajPrzyplyw = false;
+    $scope.opcjaDodajWydatek = false;
+  };
   
-  $scope.loadingWydatekDodaj = false;
   $scope.wydatekDodaj = function( kwota, budzetId ) {
     $scope.message = {};
-    $scope.loadingWydatekDodaj = true;
+    spinService.start();
     updateService.sprawdzAktualizacje();
     operacjaService.wydatekDodaj( kwota || 0, budzetId, sessionService.getSecret(), $scope, function( response ) {
       budzetService.budzetWyplujPoId( $routeParams.id, sessionService.getSecret(), $scope, budzetWyplujPoIdSuccessCallback, budzetWyplujPoIdFailureCallback );
       operacjaService.operacjeWyplujPoBudzetId( $routeParams.id, sessionService.getSecret(), $scope, operacjeWyplujPoBudzetIdSuccess, operacjeWyplujPoBudzetIdFailure );
       $scope.wydatek.kwota = null;
-      $scope.loadingWydatekDodaj = false;
+      spinService.stop();
       $scope.opcjaDodajWydatek = false;
     }, function( response ) {
       $scope.message.error = "Błąd: " + response.statusText;
-      $scope.loadingWydatekDodaj = false;
+      spinService.stop();
     });
   };
   
-  $scope.loadingPrzychodDodaj = false;
   $scope.przychodDodaj = function( kwota, budzetId ) {
     $scope.message = {};
-    $scope.loadingPrzychodDodaj = true;
+    spinService.start();
     updateService.sprawdzAktualizacje();
     operacjaService.przychodDodaj( kwota || 0, budzetId, sessionService.getSecret(), $scope, function( response ) {
       budzetService.budzetWyplujPoId( $routeParams.id, sessionService.getSecret(), $scope, budzetWyplujPoIdSuccessCallback, budzetWyplujPoIdFailureCallback );
       operacjaService.operacjeWyplujPoBudzetId( $routeParams.id, sessionService.getSecret(), $scope, operacjeWyplujPoBudzetIdSuccess, operacjeWyplujPoBudzetIdFailure );
       $scope.przychod.kwota = null;
-      $scope.loadingPrzychodDodaj = false;
+      spinService.stop();
       $scope.opcjaDodajPrzyplyw = false;
     }, function( response ){
       $scope.message.error = "Błąd: " + response.statusText;
-      $scope.loadingPrzychodDodaj = false;
+      spinService.stop();
     } );
   };
   
+  $scope.transferWykonaj = function( transfer, dawcaID ) {
+    var data = {
+      kwota: transfer && transfer.kwota ? transfer.kwota : 0,
+      biorcaID: transfer && transfer.biorcaID ? transfer.biorcaID : 0,
+      dawcaID: dawcaID
+    };
+    spinService.start( 'Przekładam słoiki...' );
+    operacjaService.transferWykonaj( data.kwota, data.dawcaID, data.biorcaID, sessionService.getSecret(), function( response ) {
+      $scope.transfer.kwota = '';
+      spinService.start( 'Liczę...' );
+      $scope.opcjaWykonajTransfer = false;
+      operacjaService.operacjeWyplujPoBudzetId( $routeParams.id, sessionService.getSecret(), $scope, operacjeWyplujPoBudzetIdSuccess, operacjeWyplujPoBudzetIdFailure );
+      spinService.start( 'Liczę' );
+      budzetService.budzetWyplujPoId( $routeParams.id, sessionService.getSecret(), $scope, budzetWyplujPoIdSuccessCallback, budzetWyplujPoIdFailureCallback );
+      spinService.stop();
+    }, function( response ) {
+      infoService.setInfo({
+        error: response.statusText
+      }, 0 );
+      console.log( response );
+      spinService.stop();
+    });
+  }
+  
   $scope.budzetUsun = function( e, budzet_id ) {
-    e.preventDefault;
-    $scope.loading = true;
+    e.preventDefault
+    spinService.start( 'Palę papierki...' );
     $scope.loadginBudzetUsun = true;
     updateService.sprawdzAktualizacje();
     var info = {};
@@ -139,13 +197,12 @@ Lucy.controller( 'budzetIdCtrl', function( $scope, $rootScope, $routeParams, $lo
       info.success = "Rozwiązałem budżet";
       infoService.setInfo( info );
       $location.path( '/budzet' );
-      $scope.loading = false;
+      spinService.stop();
     }, function( response ) {
       info.error = "Błąd: " + response.statusText;
-      info.info = "Wszystko w porządku? Jeżeli problem będzie się powtarzał, spróbuj skontaktować się z naczelnym."; 
-      infoService.setInfo( info );
+      infoService.setInfo( info, 0 );
       $location.path( '/budzet' );
-      $scope.loading = false;
+      spinService.stop();
     });
   };
 });

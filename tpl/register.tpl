@@ -1,8 +1,5 @@
 <div class="ui container">
   <div class="ui segment"> 
-    <div ng-class="{ 'active': loading }" class="ui inverted dimmer">
-      <div class="ui large text loader">Lokalizuję dłużników...</div>
-    </div>
     <form class="ui form" ng-submit="kontoZarejestruj( $event, konto )" method="POST">
       <div class="field">
         <label for="id_register_email">Nazwa konta</label>

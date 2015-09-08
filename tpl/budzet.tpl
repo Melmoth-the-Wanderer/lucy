@@ -1,16 +1,8 @@
-<div ng-class="{ 'active': loading }" class="ui inverted dimmer">
-  <div class="ui large text loader">Szukam portfela...</div>
-</div>
-
-
 <div ng-if="!opcjaDodajBudzet" class="ui buttons">
   <a class="ui yellow basic button" ng-click="dodajBudzetToggle()"><i class="plus icon"></i>Dodaj budżet</a>
 </div>
 <div ng-switch on="opcjaDodajBudzet">
   <div ng-switch-when="true">
-    <div ng-class="{ 'active': loadingBudzetDodaj }" class="ui inverted dimmer">
-      <div class="ui large text loader">Lokuję fundusze...</div>
-    </div>
     <form class="ui form" ng-submit="budzetDodaj( $event, budzet )" method="POST">
       <div class="field">
         <h3 class="ui header">Nowy budżet</h3>
@@ -31,7 +23,7 @@
   <div class="ui stackable two column grid">
     <div ng-repeat="n in budzetLista" class="column">
         <div class="ui segments">
-          <div class="ui stacked segment">
+          <div class="ui segment">
             <h2 class="ui centered block header">
               <a ng-href="#/budzet/{{ n.ID }}">{{ n.nazwa }}
                 <!-- <span class="ui tiny label">{{ n.meta.percentage }}% wszystkich</span> -->

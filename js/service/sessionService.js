@@ -4,7 +4,7 @@ Lucy.factory( 'sessionService', [ '$http', '$cookies', 'infoService', 'updateSer
   
   function set( konto, scope, successCallback, failureCallback ) {
     //http://weblogs.asp.net/dwahlin/cancelling-route-navigation-in-angularjs
-    var $promise = $http.post( '/ajax/post/startSession/', konto );
+    var $promise = $http.post( '/ajax/post/startSession/?'+lucy_v, konto );
     $promise.then( function( response ) {
       successCallback( response );
     }, function( response ) {
@@ -14,7 +14,7 @@ Lucy.factory( 'sessionService', [ '$http', '$cookies', 'infoService', 'updateSer
   
   function destroy( scope, secret, successCallback, failureCallback ) {
     var data = { secret: secret };
-    var $promise = $http.post( '/ajax/get/sessionDestroy/', JSON.stringify( data ) ); 
+    var $promise = $http.post( '/ajax/get/sessionDestroy/?'+lucy_v, JSON.stringify( data ) ); 
     $promise.then( function( response ) {
       successCallback( response );
       removeSecret();
@@ -53,7 +53,7 @@ Lucy.factory( 'sessionService', [ '$http', '$cookies', 'infoService', 'updateSer
         secret: getSecret(),
         cookieValue: cookieValue
       };
-      var $promise = $http.post( '/ajax/get/checkSession/', data );
+      var $promise = $http.post( '/ajax/get/checkSession/?'+lucy_v, data );
       $promise.then( function( response ) {
         successCallback( response );
       }, function( response ) {
@@ -63,7 +63,7 @@ Lucy.factory( 'sessionService', [ '$http', '$cookies', 'infoService', 'updateSer
     if( updateSystem ) {
       updateService.sprawdzAktualizacje( function() {
         checkSession();
-      });
+      }, function() {} );
     }
     else checkSession();
   };

@@ -1,15 +1,14 @@
 'use strict';
 
-Lucy.run( function( $rootScope, $location, $q, kontoService, sessionService, infoService ) {
-  $rootScope.loading = true;
+Lucy.run( function( $rootScope, $location, $q, kontoService, sessionService, infoService, spinService ) {
   var routePermissions = [ '/login', '/register' ]; //route that dont requires login 
   $rootScope.$on( '$routeChangeStart', function() {
-    $rootScope.loading = true;
+    spinService.start( 'Przyglądam Ci się...' );
     if( routePermissions.indexOf( $location.path() ) === -1 ) {
       var successCallback = function( response ) {
         if( response.status === 200 ) {
           $rootScope.zalogowany = true;
-          $rootScope.loading = false;
+          spinService.stop();
         }
       };
       var failureCallback = function( response ) {
@@ -18,35 +17,28 @@ Lucy.run( function( $rootScope, $location, $q, kontoService, sessionService, inf
         canceler.resolve();
         if( response == 0 ) {
           $location.path( '/login' );
-          infoService.setInfo( {
-            success: false,
-            error: "Zaloguj się.",
-            info: false,
-            danger: false
+          infoService.setInfo({
+            error: "Zaloguj się."
           }, 0 );
-          $rootScope.loading = false;
+          spinService.stop();
         }
         else if( response.status === 401 ) {
           kontoService.wyloguj( $rootScope, sessionService.getSecret(), function( response ) {
             infoService.setInfo({
-              success: false,
               error: "Nieprawidłowy klucz sesji.",
-              info: "Prawdopodobnie Twoja poprzednia sesja nie była prawidłowo wylogowana. Wszystko poprawione, możesz się zalogować ponownie.",
-              danger: false
+              info: "Prawdopodobnie Twoja poprzednia sesja nie była prawidłowo wylogowana. Wszystko poprawione, możesz się zalogować ponownie."
             });
             $location.path( '/login' );
             $rootScope.zalogowany = false;
-            $rootScope.loading = false;
+            spinService.stop();
           }, function( response ) {
             infoService.setInfo({
-              success: false,
               error: "Błąd. Odpowiedź z serwera: " + response.statusText,
-              info: "Wygląda na to, że Twoja poprzednia sesja nie była wylogowana. Próbowaliśmy Cię wylogować, ale coś poszło nie tak jak powinno...",
-              danger: false
+              info: "Wygląda na to, że Twoja poprzednia sesja nie była wylogowana. Próbowaliśmy Cię wylogować, ale coś poszło nie tak jak powinno..."
             });
             $location.path( '/login' );
             $rootScope.zalogowany = false;
-            $rootScope.loading = false;
+            spinService.stop;
           });
         }
         canceler.resolve();
@@ -57,14 +49,13 @@ Lucy.run( function( $rootScope, $location, $q, kontoService, sessionService, inf
         var info = {};
         if( response.status === 200 ) {
           $rootScope.zalogowany = true;
-          $rootScope.loading = false;
+          spinService.stop();
         }
       };
       var failureCallback = function( response ) {
         console.log( response );
-        var info = {};
         if( response == 0 ) {
-          $rootScope.loading = false;
+          spinService.stop();
         }
         else if( response.status === 401 ) {
           kontoService.wyloguj( $rootScope, sessionService.getSecret(), function( response ) {
@@ -74,7 +65,7 @@ Lucy.run( function( $rootScope, $location, $q, kontoService, sessionService, inf
             });
             $location.path( '/login' );
             $rootScope.zalogowany = false;
-            $rootScope.loading = false;
+            spinService.stop();
           }, function( response ) {
             infoService.setInfo({
               error: "Błąd. Odpowiedź z serwera: " + response.statusText,
@@ -82,7 +73,7 @@ Lucy.run( function( $rootScope, $location, $q, kontoService, sessionService, inf
             });
             $location.path( '/login' );
             $rootScope.zalogowany = false;
-            $rootScope.loading = false;
+            spinService.stop();
           });
         }
       };
@@ -90,11 +81,15 @@ Lucy.run( function( $rootScope, $location, $q, kontoService, sessionService, inf
     kontoService.czyZalogowany( successCallback, failureCallback, true );
   });
   $rootScope.$on( '$locationChangeStart', function() {
+    spinService.start( 'Czekaj...' );
     if( $rootScope.keepInfo === 0 ) {
       infoService.clearInfo();
     }
     else {
       $rootScope.keepInfo = 0;
     }
+  });
+  $rootScope.$on( '$viewContentLoaded', function() {
+    spinService.stop();
   });
 });

@@ -139,6 +139,22 @@ class Sesja extends Baza {
     return parent::post( $query, $params );
   }
   
+  private function sesjaMysqlTouch( $secret, $czas, $ua ) {
+    $query = "UPDATE `SESJA` SET
+      `sprawdzono` = :sprawdzono
+      WHERE
+      `secret` = :secret
+      AND `ua` = :ua
+      AND `utworzona` = :utworzona;";
+    $params = array(
+      ':sprawdzono' => date('Y-m-d H:i:s'),
+      ':secret' => $secret,
+      ':ua' => $ua,
+      ':utworzona' => $czas
+    );
+    var_dump( parent::post( $query, $params ) );
+  }
+  
   /*
    *  Function sesjaMysqlZwróć
    *
@@ -194,7 +210,7 @@ class Sesja extends Baza {
     parent::post( $query, $params );
   }
   
-  public function sesjaSprawdzPoprawnosc( $secret, $cookieValue ) {
+  public function sesjaSprawdzPoprawnosc( $secret, $cookieValue ) {    
     if( !$cookieValue ) {
       if( !$this->sesjaPhpCzyIstnieje() || !$this->sesjaPhpSprawdz( $secret ) ) {
         header("HTTP/1.1 401 Sesja jest niepoprawna");
@@ -209,6 +225,7 @@ class Sesja extends Baza {
           header("HTTP/1.1 401 Sesja jest niepoprawna");
           return false;
         }
+        $this->sesjaMysqlTouch( $secret, $cookieValue->utworzona, $_SERVER[ 'HTTP_USER_AGENT' ] );
         return true;
       }
       else {
@@ -220,6 +237,8 @@ class Sesja extends Baza {
         }
         $user_results = $this->konto->uzytkownikZwrocNazwaPoId( $dbSesja[0]['USER_ID'] );
         $this->sesjaPrzygotuj( $user_results[0]['nazwa'], false, $secret );
+        $this->sesjaMysqlTouch( $secret, $cookieValue->utworzona, $_SERVER[ 'HTTP_USER_AGENT' ] );
+        return true;
       }
     }
   }

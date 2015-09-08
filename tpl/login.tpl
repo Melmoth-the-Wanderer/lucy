@@ -1,7 +1,4 @@
-  <div class="ui segment"> 
-    <div ng-class="{ 'active': loading }" class="ui large inverted dimmer">
-      <div class="ui large text loader">Logowanie</div>
-    </div>
+  <div class="ui segment">
     <div class="ui two column middle aligned stackable grid" style="position: relative">
       <div class="column">
         <form ng-submit="zaloguj( $event, konto )" class="ui form"  method="POST">

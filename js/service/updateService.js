@@ -2,24 +2,24 @@
 
 Lucy.factory( 'updateService', function( $http, $q, $cookies, $window, infoService ) {
   
-  function sprawdzAktualizacje( callback ) {
+  function sprawdzAktualizacje( successCallback, failureCallback ) {
     getFromServer( function( response ) {
-      console.log( 'serwer: ' + response.data );
-      console.log( 'cookie: ' + getFromCookie() );
       if( !sprawdzCzyIstnieje() )
         putToCookie( response.data );
       if( getFromCookie() !== response.data ) {
         var canceler = $q.defer();
         canceler.resolve();
-        alert( 'Uwaga! Pojawiła się nowa wersja systemu. Aby zapewnić poprawne działanie aplikacji strona zostanie przeładowana. Dziękuję. \n Zmiany w tej wersji: \n' );
+        alert( 'Uwaga! Pojawiła się nowa wersja systemu. Aby zapewnić poprawne działanie aplikacji strona zostanie przeładowana. Dziękuję. \n\nTwoja wersja: ' + ( getFromCookie() || 'brak' ) + ' \nDostępna wersja: ' + response.data );
         $window.location.reload();
         putToCookie( response.data );
         return false;
       }
       else {
-        if( callback )
-          callback()
+        if( successCallback && failureCallback )
+          successCallback()
       };
+    }, function( response ) {
+       failureCallback();
     }); 
   }
   
@@ -42,8 +42,8 @@ Lucy.factory( 'updateService', function( $http, $q, $cookies, $window, infoServi
     return $cookies.get( 'wersja' ); 
   }
   
-  function getFromServer( successCallback ) {
-    var $promise = $http.post( '/ajax/get/systemWersjaWypluj/', {cache: false} );
+  function getFromServer( successCallback, failureCallback ) {
+    var $promise = $http.post( '/ajax/get/systemWersjaWypluj/?'+lucy_v, {cache: false} );
     $promise.then( function( response ) { 
       if( successCallback ) {
         successCallback( response ); 

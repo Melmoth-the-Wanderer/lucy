@@ -27,15 +27,16 @@
     <script src="//code.angularjs.org/1.4.3/angular-route.js"></script>
     <script src="//code.angularjs.org/1.4.3/angular-resource.js"></script>
     <script src="//code.angularjs.org/1.4.3/angular-cookies.js"></script>
-
+    
     <script src="js/app.js<?php echo '?v='.$lucy_v;?>"></script>
     <script src="js/config.js<?php echo '?v='.$lucy_v;?>"></script>
     <script src="js/run.js<?php echo '?v='.$lucy_v;?>"></script>
-    
+
     <script src="js/directive/infoDirective.js<?php echo '?v='.$lucy_v;?>"></script>
     <script src="js/directive/focusableDirective.js<?php echo '?v='.$lucy_v;?>"></script>
-    
+
     <script src="js/controllers/404Ctrl.js<?php echo '?v='.$lucy_v;?>"></script>
+    <script src="js/controllers/spinCtrl.js<?php echo '?v='.$lucy_v;?>"></script>
     <script src="js/controllers/menuCtrl.js<?php echo '?v='.$lucy_v;?>"></script>
     <script src="js/controllers/homeCtrl.js<?php echo '?v='.$lucy_v;?>"></script>
     <script src="js/controllers/loginCtrl.js<?php echo '?v='.$lucy_v;?>"></script>
@@ -44,27 +45,36 @@
     <script src="js/controllers/budzetCtrl.js<?php echo '?v='.$lucy_v;?>"></script>
     <script src="js/controllers/budzetIdCtrl.js<?php echo '?v='.$lucy_v;?>"></script>
     <script src="js/controllers/budzetIdEdytujCtrl.js<?php echo '?v='.$lucy_v;?>"></script>
-    
+
     <script src="js/service/updateService.js<?php echo '?v='.$lucy_v;?>"></script>
+    <script src="js/service/spinService.js<?php echo '?v='.$lucy_v;?>"></script>
     <script src="js/service/menuService.js<?php echo '?v='.$lucy_v;?>"></script>
     <script src="js/service/sessionService.js<?php echo '?v='.$lucy_v;?>"></script>
     <script src="js/service/kontoService.js<?php echo '?v='.$lucy_v;?>"></script>
     <script src="js/service/infoService.js<?php echo '?v='.$lucy_v;?>"></script>
     <script src="js/service/budzetService.js<?php echo '?v='.$lucy_v;?>"></script>
     <script src="js/service/operacjaService.js<?php echo '?v='.$lucy_v;?>"></script>
-    
+
     <!-- Angularify Semantic UI -->
-    <script src="js/angular-semantic-ui.js"></script>
+    <?php /* <script src="js/angular-semantic-ui.js<?php echo '?v='.$lucy_v;?>"></script> */ ?>
     
-    
+    <!-- OFFLINE.js -->
+    <script src="js/offline.min.js"></script>
+    <link rel="stylesheet" href="css/offline-theme-dark-indicator.css<?php echo '?v='.$lucy_v;?>" />
+    <link rel="stylesheet" href="css/offline-language-english.css<?php echo '?v='.$lucy_v;?>" />
+    <link rel="stylesheet" href="css/offline-language-english-indicator.css<?php echo '?v='.$lucy_v;?>" />
+
     <!-- Dodatkowe -->
-    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/style.css<?php echo '?v='.$lucy_v;?>" />
     <script>
       var lucy_v = '<?php echo $lucy_v; ?>';
     </script>
+    <?php require_once( 'GA.php' ); ?>
   </head>
-  
   <body>
+    <div ng-class="{ 'active': loading > 0 }" ng-controller="spinCtrl" class="ui inverted dimmer">
+      <div class="ui large text loader">{{ loadingMessage }}</div>
+    </div>
     <header ng-controller="menuCtrl">
       <div class="ui brown pointing menu">
         <a href="#home" ng-class="activeClass( '/home' )" class="item">
@@ -81,7 +91,7 @@
         </a>
         <div ng-if="zalogowany" class="right menu">
           <div ng-if="lucy_v"class="item">
-            <a ng-click="aktualizacjeSprawdz( $event )" href="#">v. {{ lucy_v }}</a>
+            <a ng-click="aktualizacjeSprawdz( $event )" href="#">v{{ lucy_v }}</a>
           </div>
           <div class="item">
             <div class="ui small buttons">
