@@ -1,15 +1,15 @@
 'use strict';
 
 Lucy.run( function( $rootScope, $location, $q, kontoService, sessionService, infoService, spinService ) {
-  var routePermissions = [ '/login', '/register' ]; //route that dont requires login 
+  var routePermissions = [ '/login', '/register', '/404' ]; //route that dont requires login 
   $rootScope.$on( '$routeChangeStart', function() {
     spinService.start( 'Przyglądam Ci się...' );
     if( routePermissions.indexOf( $location.path() ) === -1 ) {
       var successCallback = function( response ) {
         if( response.status === 200 ) {
           $rootScope.zalogowany = true;
-          spinService.stop();
         }
+        spinService.stop();
       };
       var failureCallback = function( response ) {
         console.log( response );
@@ -20,7 +20,6 @@ Lucy.run( function( $rootScope, $location, $q, kontoService, sessionService, inf
           infoService.setInfo({
             error: "Zaloguj się."
           }, 0 );
-          spinService.stop();
         }
         else if( response.status === 401 ) {
           kontoService.wyloguj( $rootScope, sessionService.getSecret(), function( response ) {
@@ -30,7 +29,6 @@ Lucy.run( function( $rootScope, $location, $q, kontoService, sessionService, inf
             });
             $location.path( '/login' );
             $rootScope.zalogowany = false;
-            spinService.stop();
           }, function( response ) {
             infoService.setInfo({
               error: "Błąd. Odpowiedź z serwera: " + response.statusText,
@@ -38,9 +36,9 @@ Lucy.run( function( $rootScope, $location, $q, kontoService, sessionService, inf
             });
             $location.path( '/login' );
             $rootScope.zalogowany = false;
-            spinService.stop;
           });
         }
+        spinService.stop;
         canceler.resolve();
       };
     }
@@ -49,8 +47,8 @@ Lucy.run( function( $rootScope, $location, $q, kontoService, sessionService, inf
         var info = {};
         if( response.status === 200 ) {
           $rootScope.zalogowany = true;
-          spinService.stop();
         }
+        spinService.stop();
       };
       var failureCallback = function( response ) {
         console.log( response );
@@ -65,7 +63,6 @@ Lucy.run( function( $rootScope, $location, $q, kontoService, sessionService, inf
             });
             $location.path( '/login' );
             $rootScope.zalogowany = false;
-            spinService.stop();
           }, function( response ) {
             infoService.setInfo({
               error: "Błąd. Odpowiedź z serwera: " + response.statusText,
@@ -73,23 +70,19 @@ Lucy.run( function( $rootScope, $location, $q, kontoService, sessionService, inf
             });
             $location.path( '/login' );
             $rootScope.zalogowany = false;
-            spinService.stop();
           });
+          spinService.stop();
         }
       };
     }
     kontoService.czyZalogowany( successCallback, failureCallback, true );
   });
   $rootScope.$on( '$locationChangeStart', function() {
-    spinService.start( 'Czekaj...' );
     if( $rootScope.keepInfo === 0 ) {
       infoService.clearInfo();
     }
     else {
       $rootScope.keepInfo = 0;
     }
-  });
-  $rootScope.$on( '$viewContentLoaded', function() {
-    spinService.stop();
   });
 });
