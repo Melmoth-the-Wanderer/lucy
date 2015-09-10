@@ -16,6 +16,7 @@ Lucy.run( function( $rootScope, $location, $q, kontoService, sessionService, inf
         var canceler = $q.defer();
         canceler.resolve();
         if( response == 0 ) {
+          spinService.stop();
           $location.path( '/login' );
           infoService.setInfo({
             error: "Zaloguj się."
@@ -27,6 +28,7 @@ Lucy.run( function( $rootScope, $location, $q, kontoService, sessionService, inf
               error: "Nieprawidłowy klucz sesji.",
               info: "Prawdopodobnie Twoja poprzednia sesja nie była prawidłowo wylogowana. Wszystko poprawione, możesz się zalogować ponownie."
             });
+            spinService.stop();
             $location.path( '/login' );
             $rootScope.zalogowany = false;
           }, function( response ) {
@@ -34,11 +36,11 @@ Lucy.run( function( $rootScope, $location, $q, kontoService, sessionService, inf
               error: "Błąd. Odpowiedź z serwera: " + response.statusText,
               info: "Wygląda na to, że Twoja poprzednia sesja nie była wylogowana. Próbowaliśmy Cię wylogować, ale coś poszło nie tak jak powinno..."
             });
+            spinService.stop();
             $location.path( '/login' );
             $rootScope.zalogowany = false;
           });
         }
-        spinService.stop;
         canceler.resolve();
       };
     }
@@ -61,6 +63,7 @@ Lucy.run( function( $rootScope, $location, $q, kontoService, sessionService, inf
               success: "Nieprawidłowy klucz sesji.",
               info: "Wygląda na to, że Twoja poprzednia sesja nie była wylogowana. Wszystko poprawione, możesz się zalogować ponownie."
             });
+            spinService.stop( 'a' );
             $location.path( '/login' );
             $rootScope.zalogowany = false;
           }, function( response ) {
@@ -68,10 +71,10 @@ Lucy.run( function( $rootScope, $location, $q, kontoService, sessionService, inf
               error: "Błąd. Odpowiedź z serwera: " + response.statusText,
               info: "Wygląda na to, że Twoja poprzednia sesja nie była wylogowana. Próbowaliśmy Cię wylogować, ale coś poszło nie tak jak powinno..."
             });
+            spinService.stop();
             $location.path( '/login' );
             $rootScope.zalogowany = false;
           });
-          spinService.stop();
         }
       };
     }

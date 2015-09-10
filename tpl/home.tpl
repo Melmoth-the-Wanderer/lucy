@@ -2,7 +2,7 @@
   <h2 class="ui header">Changelog:</h2>
   <div class="ui bulleted list">
     <div class="item">
-      <div class="ui header">0.9.68 (2015-09-10)</div>
+      <div class="ui header">0.9.70 (2015-09-10)</div>
       <div class="list">
         <div class="item">Nowość: fundusze danego budżetu pokazane na liście budżetów podczas wykonywania transferu</div>
         <div class="item">Poprawka: błąd wyświetlania loadera podczas wykonywania operacji na budżecie</div>

@@ -19,8 +19,13 @@ Lucy.factory( 'spinService', function( $rootScope, $timeout ) {
     }, 200, true, message );
   }
   
+  function reset() {
+    $rootScope.loading = 0; 
+  }
+  
   return {
     start: start,
-    stop: stop
+    stop: stop,
+    reset: reset
   }
 });
