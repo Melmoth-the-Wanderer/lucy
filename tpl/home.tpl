@@ -2,6 +2,19 @@
   <h2 class="ui header">Changelog:</h2>
   <div class="ui bulleted list">
     <div class="item">
+      <div class="ui header">0.9.68</div>
+      <div class="list">
+        <div class="item">Nowość: fundusze danego budżetu pokazane na liście budżetów podczas wykonywania transferu</div>
+        <div class="item">Poprawka: błąd wyświetlania loadera podczas wykonywania operacji na budżecie</div>
+      </div>
+    </div>
+    <div class="item">
+      <h3 class="ui header">0.9.62 (2015-09-08)</h3>
+      <div class="list">
+        <div class="item">Poprawki błędów</div>
+      </div>
+    </div>
+    <div class="item">
       <h3 class="ui header">0.9.61 (2015-09-08)</h3>
       <div class="list">
         <div class="item">Nowość: Dodana możliwość wyonania transferu z budżetu na inny - opcja dostępna w szczegółach budżetu (jeżeli posiadasz więcej niż 1 budżet )</div>

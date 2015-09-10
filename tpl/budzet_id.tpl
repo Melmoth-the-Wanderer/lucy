@@ -25,7 +25,7 @@
 <div class="ui divider"></div>
 <div class="ui container">
   <div class="ui two columns center aligned stackable grid">
-    <div class="column">
+    <div class="stretched column">
       <div class="ui small statistic">
         <div class="value">
           {{ budzet.kwota }}
@@ -36,19 +36,17 @@
       </div>
     </div>
     <div focusable-directive class="column">
-      
       <div ng-if="!opcjaDodajWydatek && !opcjaDodajPrzyplyw && !opcjaWykonajTransfer" class="three ui buttons">
-        <a ng-click="wydatekDodajToggle()" class="focusTrigger ui big yellow button"><i class="minus icon"></i>Wydatek</a>
-        <a ng-click="przyplywDodajToggle()" class="focusTrigger ui big button"><i class="plus icon"></i>Przypływ</a>
-        <a ng-if="budzetLista.length > 0" ng-click="transferWykonajToggle()" class="focusTrigger ui big button"><i class="exchange icon"></i>Transfer</a>
+        <a ng-click="wydatekDodajToggle()" class="focusTrigger ui big yellow button"><i class="minus icon"></i>wydaj</a>
+        <a ng-click="przyplywDodajToggle()" class="focusTrigger ui big basic yellow button"><i class="plus icon"></i>dodaj</a>
+        <a ng-if="budzetLista.length > 0" ng-click="transferWykonajToggle()" class="focusTrigger ui big basic yellow button"><i class="exchange icon"></i>transfer</a>
       </div>
       
       <div ng-if="opcjaDodajWydatek" class="ui inverted segment">
         <h2 class="ui header">Wydatek</h2>
         <form ng-submit="wydatekDodaj( wydatek.kwota, budzet.ID )" class="ui inverted form" method="POST">
           <div class="field">
-            <label for="id_przychod_kwota">Podaj wydaną kwotę:</label>
-            <input ng-model="wydatek.kwota" id="id_wydatek_kwota" class="focus" type="number" min="0.01" max="9999999999999.99" step="0.01" />
+            <input ng-model="wydatek.kwota" id="id_wydatek_kwota" class="focus" type="number" min="0.01" max="9999999999999.99" step="0.01" placeholder="wpisz kwotę" />
           </div>
           <div class="field">
             <div class="ui large buttons">
@@ -82,11 +80,10 @@
               <input ng-model="transfer.kwota" id="id_transfer_kwota" class="focus" type="number" min="0.01" max="9999999999999.99" step="0.01" placeholder="Wpisz kwotę"/>
             </div>
             <div class="field">
-              <label for="id_przychod_kwota">Wskaż docelowy budżet:</label>
               <select ng-model="transfer.biorcaID" placeholder="Wybierz budżet">
                 <option value="">wybierz budżet</option>
                 <option ng-repeat="n in budzetLista" value="{{ n.ID }}">
-                  {{ n.nazwa }}
+                  {{ n.nazwa }} ({{ n.kwota }})
                 </option>
               </select>
             </div>
@@ -110,7 +107,7 @@
     Brak dokonanych operacji na budżecie
   </div>
   <div ng-if="operacjeLista.length">
-    <table class="ui celled striped compact inverted table">
+    <table class="ui celled striped compact table">
       <thead>
         <tr>
           <th>Operacja</th>

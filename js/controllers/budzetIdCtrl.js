@@ -74,8 +74,6 @@ Lucy.controller( 'budzetIdCtrl', function( $scope, $rootScope, $routeParams, $lo
         }
       }
     }
-    console.log( budzetLista );
-    //alert( 'nie działa: budzetIdCtrl:79 -> wypluwa złą listę budżetów' );
     $scope.budzetLista = budzetLista;
     spinService.stop();
   };
@@ -133,10 +131,12 @@ Lucy.controller( 'budzetIdCtrl', function( $scope, $rootScope, $routeParams, $lo
   
   $scope.wydatekDodaj = function( kwota, budzetId ) {
     $scope.message = {};
-    spinService.start();
+    spinService.start( 'Dodaję...' );
     updateService.sprawdzAktualizacje();
     operacjaService.wydatekDodaj( kwota || 0, budzetId, sessionService.getSecret(), $scope, function( response ) {
+      spinService.start();
       budzetService.budzetWyplujPoId( $routeParams.id, sessionService.getSecret(), $scope, budzetWyplujPoIdSuccessCallback, budzetWyplujPoIdFailureCallback );
+      spinService.start();
       operacjaService.operacjeWyplujPoBudzetId( $routeParams.id, sessionService.getSecret(), $scope, operacjeWyplujPoBudzetIdSuccess, operacjeWyplujPoBudzetIdFailure );
       $scope.wydatek.kwota = null;
       spinService.stop();
@@ -149,10 +149,12 @@ Lucy.controller( 'budzetIdCtrl', function( $scope, $rootScope, $routeParams, $lo
   
   $scope.przychodDodaj = function( kwota, budzetId ) {
     $scope.message = {};
-    spinService.start();
+    spinService.start('');
     updateService.sprawdzAktualizacje();
     operacjaService.przychodDodaj( kwota || 0, budzetId, sessionService.getSecret(), $scope, function( response ) {
+      spinService.start();
       budzetService.budzetWyplujPoId( $routeParams.id, sessionService.getSecret(), $scope, budzetWyplujPoIdSuccessCallback, budzetWyplujPoIdFailureCallback );
+      spinService.start();
       operacjaService.operacjeWyplujPoBudzetId( $routeParams.id, sessionService.getSecret(), $scope, operacjeWyplujPoBudzetIdSuccess, operacjeWyplujPoBudzetIdFailure );
       $scope.przychod.kwota = null;
       spinService.stop();
@@ -172,8 +174,8 @@ Lucy.controller( 'budzetIdCtrl', function( $scope, $rootScope, $routeParams, $lo
     spinService.start( 'Przekładam słoiki...' );
     operacjaService.transferWykonaj( data.kwota, data.dawcaID, data.biorcaID, sessionService.getSecret(), function( response ) {
       $scope.transfer.kwota = '';
-      spinService.start( 'Liczę...' );
       $scope.opcjaWykonajTransfer = false;
+      spinService.start( 'Liczę...' );
       operacjaService.operacjeWyplujPoBudzetId( $routeParams.id, sessionService.getSecret(), $scope, operacjeWyplujPoBudzetIdSuccess, operacjeWyplujPoBudzetIdFailure );
       spinService.start( 'Liczę' );
       budzetService.budzetWyplujPoId( $routeParams.id, sessionService.getSecret(), $scope, budzetWyplujPoIdSuccessCallback, budzetWyplujPoIdFailureCallback );

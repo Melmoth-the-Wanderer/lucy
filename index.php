@@ -60,7 +60,7 @@
     
     <!-- OFFLINE.js -->
     <script src="js/offline.min.js"></script>
-    <link rel="stylesheet" href="css/offline-theme-dark-indicator.css<?php echo '?v='.$lucy_v;?>" />
+    <link rel="stylesheet" href="css/offline-theme-dark.css<?php echo '?v='.$lucy_v;?>" />
     <link rel="stylesheet" href="css/offline-language-english.css<?php echo '?v='.$lucy_v;?>" />
     <link rel="stylesheet" href="css/offline-language-english-indicator.css<?php echo '?v='.$lucy_v;?>" />
 
