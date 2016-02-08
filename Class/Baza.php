@@ -2,10 +2,10 @@
 
 class Baza {
   private $db;
-  private static $db_name = 'epvk_lucyprod';
-  private static $db_user = 'epvk_lucyprod';
-  private static $db_pw = '1pUVIgBr';
-  private static $db_host = 'sql.s14.vdl.pl';
+  private static $db_name = '*******';
+  private static $db_user = '******';
+  private static $db_pw = '******';
+  private static $db_host = '******';
 
 
   private function conn() {
